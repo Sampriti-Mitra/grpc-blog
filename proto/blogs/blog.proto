@@ -1,0 +1,63 @@
+// ./proto/blogs/blog.proto
+
+syntax = "proto3";
+
+option go_package = "github.com/Sampriti-Mitra/blog-post/protogen/golang/blogs";
+
+import "google/api/date.proto";
+import "google/api/annotations.proto";
+
+message Blog {
+    string post_id = 1 [ json_name = "post_id" ];
+    string title = 2 [ json_name = "title" ];
+    string content = 3 [ json_name = "content" ];
+    string author = 4 [ json_name = "author" ];
+    google.type.Date publication_date = 5 [ json_name = "publication_date" ];
+    repeated string tags = 6;
+}
+
+message Empty {}
+
+message Result{
+    bool success = 1;
+    string message = 2;
+}
+
+message BlogUpdateRequest{
+    string post_id = 1 [ json_name = "post_id" ];
+    string title = 2 [ json_name = "title" ];
+    string content = 3 [ json_name = "content" ];
+    string author = 4 [ json_name = "author" ];
+    repeated string tags = 5;
+}
+
+message BlogFetchRequest{
+    string post_id = 1 [ json_name = "post_id" ];
+}
+
+service Blogs {
+  rpc AddPost(Blog) returns (Blog) {
+    option (google.api.http) = {
+      post: "/v1/blogs",
+      body: "*"
+    };
+  }
+  rpc ReadPost(BlogFetchRequest) returns (Blog) {
+     option (google.api.http) = {
+      get: "/v1/blogs/{post_id}",
+    };
+  }
+  rpc UpdatePost(BlogUpdateRequest) returns (Blog) {
+     option (google.api.http) = {
+      patch: "/v1/blogs/{post_id}",
+      body: "*"
+    };
+  }
+  rpc DeletePost(BlogFetchRequest) returns (Result) {
+     option (google.api.http) = {
+      delete: "/v1/blogs/{post_id}",
+    };
+  }
+
+  
+}
