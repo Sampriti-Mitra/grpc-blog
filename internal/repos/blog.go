@@ -46,6 +46,7 @@ func (br *BlogRepo) UpdatePost(blogUpdateReq *blogs.BlogUpdateRequest) (*blogs.B
 	existingBlog.Tags = blogUpdateReq.GetTags()
 	existingBlog.Title = blogUpdateReq.GetTitle()
 	existingBlog.Content = blogUpdateReq.GetContent()
+	existingBlog.Author = blogUpdateReq.GetAuthor()
 
 	return existingBlog, nil
 
