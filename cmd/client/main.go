@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/Sampriti-Mitra/blog-post/protogen/golang/blogs"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/genproto/googleapis/type/date"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -21,14 +20,61 @@ func main() {
 	}
 	defer conn.Close()
 
-	mux := runtime.NewServeMux()
-	if err = blogs.RegisterBlogsHandler(context.Background(), mux, conn); err != nil {
-		log.Fatalf("failed to register the order server: %v", err)
-	}
+	client := blogs.NewBlogsClient(conn)
+	postId := createPost(client)
+	getPost(client, postId)
+	updatePost(client, postId)
+	deletePost(client, postId)
 
-	addr := "0.0.0.0:8080"
-	fmt.Println("API gateway server is running on " + addr)
-	if err = http.ListenAndServe(addr, mux); err != nil {
-		log.Fatal("gateway server closed abruptly: ", err)
+}
+
+func createPost(client blogs.BlogsClient) string {
+	blog, err := client.AddPost(context.Background(), &blogs.Blog{
+		Title:   "How to make a blog",
+		Content: "Just start blogging by adding text",
+		Author:  "Sam",
+		PublicationDate: &date.Date{
+			Year:  2024,
+			Month: 05,
+			Day:   1,
+		},
+		Tags: []string{"starter", "newbie", "blog"},
+	})
+	if err != nil {
+		fmt.Println("unexpected error in create", err)
 	}
+	fmt.Println(blog)
+	return blog.PostId
+}
+
+func getPost(client blogs.BlogsClient, postId string) {
+	blog, err := client.ReadPost(context.Background(), &blogs.BlogFetchRequest{PostId: postId})
+	if err != nil {
+		fmt.Println("unexpected error in create", err)
+	}
+	fmt.Println(blog)
+}
+
+func updatePost(client blogs.BlogsClient, postId string) {
+	blog, err := client.UpdatePost(context.Background(), &blogs.BlogUpdateRequest{
+		PostId:  postId,
+		Title:   "How to update a blog post",
+		Content: "Updating a blog post is easy",
+		Author:  "Sampriti",
+		Tags:    []string{"update", "blog"},
+	})
+	if err != nil {
+		fmt.Println("unexpected error in post", err)
+	}
+	fmt.Println(blog)
+}
+
+func deletePost(client blogs.BlogsClient, postId string) {
+	res, err := client.DeletePost(context.Background(), &blogs.BlogFetchRequest{
+		PostId: postId,
+	})
+	if err != nil {
+		fmt.Println("unexpected error in post", err)
+	}
+	fmt.Println(res)
 }

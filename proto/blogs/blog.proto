@@ -5,7 +5,6 @@ syntax = "proto3";
 option go_package = "github.com/Sampriti-Mitra/blog-post/protogen/golang/blogs";
 
 import "google/api/date.proto";
-import "google/api/annotations.proto";
 
 message Blog {
     string post_id = 1 [ json_name = "post_id" ];
@@ -36,28 +35,10 @@ message BlogFetchRequest{
 }
 
 service Blogs {
-  rpc AddPost(Blog) returns (Blog) {
-    option (google.api.http) = {
-      post: "/v1/blogs",
-      body: "*"
-    };
-  }
-  rpc ReadPost(BlogFetchRequest) returns (Blog) {
-     option (google.api.http) = {
-      get: "/v1/blogs/{post_id}",
-    };
-  }
-  rpc UpdatePost(BlogUpdateRequest) returns (Blog) {
-     option (google.api.http) = {
-      patch: "/v1/blogs/{post_id}",
-      body: "*"
-    };
-  }
-  rpc DeletePost(BlogFetchRequest) returns (Result) {
-     option (google.api.http) = {
-      delete: "/v1/blogs/{post_id}",
-    };
-  }
+  rpc AddPost(Blog) returns (Blog) {}
+  rpc ReadPost(BlogFetchRequest) returns (Blog) {}
+  rpc UpdatePost(BlogUpdateRequest) returns (Blog) {}
+  rpc DeletePost(BlogFetchRequest) returns (Result) {}
 
   
 }
