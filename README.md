@@ -1,5 +1,5 @@
-## Run server
+## Run Server
 ```go run cmd/server/main.go```
 
-## run Client
+## Run Client
 ```go run cmd/client/main.go```
